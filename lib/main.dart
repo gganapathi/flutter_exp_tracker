@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Expense tracker',
       theme: ThemeData(
-          primarySwatch: Colors.purple,
+          primaryColor: Colors.blue,
           accentColor: Colors.amber,
           fontFamily: 'Quicksand',
           appBarTheme: AppBarTheme(
@@ -50,14 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _addNewTransaction(String title, double amount, DateTime selectedDate) {
-    var transaction = new Transaction(
-        DateTime.now().toString(), title, amount, selectedDate);
+    var transaction =
+        new Transaction(DateTime.now().toString(), title, amount, selectedDate);
     setState(() {
       _transactions.add(transaction);
     });
   }
 
-  void _deleteTransaction(String id){
+  void _deleteTransaction(String id) {
     setState(() {
       _transactions.removeWhere((txn) => txn.id == id);
     });
@@ -75,26 +75,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Expense tracker'),
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              _startNewTransaction(context);
+            }),
+      ],
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Expense tracker'),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                _startNewTransaction(context);
-              }),
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _recentTransactions.isNotEmpty
-              ? Chart(_recentTransactions)
-              : Container(),
-          TransactionList(_transactions, _deleteTransaction),
-        ],
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _recentTransactions.isNotEmpty
+                ? Container(
+                    //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.4,
+                    child: Chart(_recentTransactions))
+                : Container(),
+            Container(
+                //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.6,
+                child: TransactionList(_transactions, _deleteTransaction)),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

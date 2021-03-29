@@ -25,9 +25,7 @@ class TransactionList extends StatelessWidget {
               ),
             ],
           )
-        : Container(
-            height: 500,
-            child: ListView.builder(
+        : ListView.builder(
               itemBuilder: (ctx, index) {
                 return Card(
                   elevation: 2.0,
@@ -53,7 +51,6 @@ class TransactionList extends StatelessWidget {
                 );
               },
               itemCount: _transactions.length,
-            ),
-          );
+            );
   }
 }
