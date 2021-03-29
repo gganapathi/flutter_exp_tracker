@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,8 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLandScape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final mediaQuery = MediaQuery.of(context);
+    bool isLandScape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text('Expense tracker'),
       actions: <Widget>[
@@ -98,9 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final transactionListWidget = Container(
         //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
-        height: (MediaQuery.of(context).size.height -
+        height: (mediaQuery.size.height -
                 appBar.preferredSize.height -
-                MediaQuery.of(context).padding.top) *
+                mediaQuery.padding.top) *
             0.6,
         child: TransactionList(_transactions, _deleteTransaction));
 
@@ -116,7 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('Show chart'),
-                  Switch(
+                  //The adaptive is to change the look and feel specific to platform (Android/iOS).
+                  // This can be available for some widgets
+                  Switch.adaptive(
                       value: _showChart,
                       onChanged: (val) {
                         setState(() {
@@ -128,9 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
             if (!isLandScape) //A replaceable to the regular ternary operator (?:) which is just like normal if without {} braces
               Container(
                   //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
-                  height: (MediaQuery.of(context).size.height -
+                  height: (mediaQuery.size.height -
                           appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
+                          mediaQuery.padding.top) *
                       0.4,
                   child: Chart(_recentTransactions)),
             if (!isLandScape) transactionListWidget,
@@ -138,16 +142,17 @@ class _MyHomePageState extends State<MyHomePage> {
               _showChart
                   ? Container(
                       //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
-                      height: (MediaQuery.of(context).size.height -
+                      height: (mediaQuery.size.height -
                               appBar.preferredSize.height -
-                              MediaQuery.of(context).padding.top) *
+                              mediaQuery.padding.top) *
                           0.7,
                       child: Chart(_recentTransactions))
                   : transactionListWidget,
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      //disabling the floating action button if the running platform is iOS
+      floatingActionButton: Platform.isIOS? Container() : FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
           _startNewTransaction(context);
