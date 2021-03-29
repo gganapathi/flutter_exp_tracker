@@ -1,12 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:personal_expense_tracker/widget/NewTransaction.dart';
 
 import 'models/Transaction.dart';
 import 'widget/Chart.dart';
 import 'widget/TransactionList.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  //Below two lines are to lock application orientation to only portrait
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -41,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Transaction> _transactions = [];
+  bool _showChart = false;
 
   List<Transaction> get _recentTransactions {
     return _transactions
@@ -75,6 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLandScape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text('Expense tracker'),
       actions: <Widget>[
@@ -86,6 +96,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
+    final transactionListWidget = Container(
+        //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
+        height: (MediaQuery.of(context).size.height -
+                appBar.preferredSize.height -
+                MediaQuery.of(context).padding.top) *
+            0.6,
+        child: TransactionList(_transactions, _deleteTransaction));
+
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -93,22 +111,39 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _recentTransactions.isNotEmpty
-                ? Container(
-                    //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
-                    height: (MediaQuery.of(context).size.height -
-                            appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.4,
-                    child: Chart(_recentTransactions))
-                : Container(),
-            Container(
-                //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
-                height: (MediaQuery.of(context).size.height -
-                        appBar.preferredSize.height -
-                        MediaQuery.of(context).padding.top) *
-                    0.6,
-                child: TransactionList(_transactions, _deleteTransaction)),
+            if (isLandScape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show chart'),
+                  Switch(
+                      value: _showChart,
+                      onChanged: (val) {
+                        setState(() {
+                          _showChart = val;
+                        });
+                      }),
+                ],
+              ),
+            if (!isLandScape) //A replaceable to the regular ternary operator (?:) which is just like normal if without {} braces
+              Container(
+                  //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.4,
+                  child: Chart(_recentTransactions)),
+            if (!isLandScape) transactionListWidget,
+            if (isLandScape)
+              _showChart
+                  ? Container(
+                      //Setting the container height 60% of the remaining height out of app bar and status bar excluded height
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.7,
+                      child: Chart(_recentTransactions))
+                  : transactionListWidget,
           ],
         ),
       ),

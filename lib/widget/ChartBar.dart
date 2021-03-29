@@ -11,50 +11,51 @@ class ChartBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-        fit: FlexFit.tight,
-        child: Column(
-          children: [
-            Container(
-              height: 20,
-              child: FittedBox(
-                child: Text('\$${_totalAmount.toStringAsFixed(0)}'),
-              ),
+    return LayoutBuilder(builder: (ctx, constraint){
+      return Column(
+        children: [
+          Container(
+            height: constraint.maxHeight * 0.10,
+            child: FittedBox(
+              child: Text('\$${_totalAmount.toStringAsFixed(0)}',),
             ),
-            SizedBox(
-              height: 4,
-            ),
-            Container(
-              height: 60,
-              width: 15,
-              child: Stack(
-                children: [
-                  Container(
+          ),
+          SizedBox(
+            height: constraint.maxHeight * 0.075,
+          ),
+          Container(
+            height: constraint.maxHeight * 0.65,
+            width: 15,
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey, width: 1.0),
+                    color: Color.fromRGBO(220, 220, 220, 1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                FractionallySizedBox(
+                  heightFactor: _amountPctOfDay,
+                  child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey, width: 1.0),
-                      color: Color.fromRGBO(220, 220, 220, 1),
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  FractionallySizedBox(
-                    heightFactor: _amountPctOfDay,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-            SizedBox(
-              height: 4,
-            ),
-            Container(
-              child: Text('$_spentDayLabel'),
-            )
-          ],
-        ));
+          ),
+          SizedBox(
+            height: constraint.maxHeight * 0.075,
+          ),
+          Container(
+            height: constraint.maxHeight * 0.1,
+            child: FittedBox(child: Text('$_spentDayLabel')),
+          )
+        ],
+      );
+    });
   }
 }
