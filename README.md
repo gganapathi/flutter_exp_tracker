@@ -1,10 +1,13 @@
 # personal_expense_tracker
 
-A new Flutter project.
+A Flutter sample that showcases the different UI widgets.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
+. List with list tile
+. Bottom sheet
+. Date picker
+. A simple custom chart widget
+. Using theme data
+. Using both stateful and stateless widgets
 
 A few resources to get you started if this is your first Flutter project:
 
