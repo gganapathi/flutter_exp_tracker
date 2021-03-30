@@ -1,6 +1,6 @@
 # personal_expense_tracker
 
-A Flutter sample that showcases the different UI widgets.
+A Flutter sample that showcases the different UI widgets, stateless and stateful components.
 
 * List with list tile
 * Bottom sheet
